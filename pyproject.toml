@@ -1,0 +1,25 @@
+[project]
+name = "rabbitorderservice"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Aleksandr Grekov",email = "aleksgrekov94@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi (>=0.115.11,<0.116.0)",
+    "sqlalchemy (>=2.0.38,<3.0.0)",
+    "uvicorn[standart] (>=0.34.0,<0.35.0)"
+]
+
+[tool.poetry]
+package-mode = false
+
+[tool.poetry.group.dev.dependencies]
+black = "^25.1.0"
+isort = "^6.0.1"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
