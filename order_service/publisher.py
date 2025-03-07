@@ -1,13 +1,10 @@
 from config.base import base_config
-from typing import TYPE_CHECKING
-from aio_pika import Message, DeliveryMode
+from aio_pika import Message, DeliveryMode, Channel
 
 from config.rabbit_connection import create_connection_and_channel
 from logger import configure_logging
+from schemas import OrderSchema
 
-if TYPE_CHECKING:
-    from aio_pika import Channel
-    from schemas import OrderSchema
 
 logger = configure_logging(__name__)
 

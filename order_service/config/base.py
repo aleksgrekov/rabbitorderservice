@@ -1,9 +1,11 @@
-from pydantic_settings import BaseSettings
+from pathlib import Path
+
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Base(BaseSettings):
-    RABBITMQ_DEFAULT_USER: str = "user"
-    RABBITMQ_DEFAULT_PASS: str = "password"
+    RABBITMQ_DEFAULT_USER: str = "guest"
+    RABBITMQ_DEFAULT_PASS: str = "guest"
     RABBITMQ_LOCAL_HOST_NAME: str = "localhost"
     RABBITMQ_LOCAL_PORT: int = 5672
     RABBITMQ_QUEUE: str = "orders_queue"
@@ -16,6 +18,12 @@ class Base(BaseSettings):
             f"{self.RABBITMQ_LOCAL_HOST_NAME}:"
             f"{self.RABBITMQ_LOCAL_PORT}/"
         )
+
+    model_config = SettingsConfigDict(
+        env_file=Path(__file__).resolve().parent.parent.parent
+        / ".env",  # Путь к файлу .env
+        extra="ignore",  # Игнорировать лишние переменные окружения
+    )
 
 
 base_config = Base()
