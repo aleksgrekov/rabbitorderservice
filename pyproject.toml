@@ -6,11 +6,14 @@ authors = [
     {name = "Aleksandr Grekov",email = "aleksgrekov94@gmail.com"}
 ]
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.12,<4.0"
 dependencies = [
     "fastapi (>=0.115.11,<0.116.0)",
     "sqlalchemy (>=2.0.38,<3.0.0)",
-    "uvicorn[standart] (>=0.34.0,<0.35.0)"
+    "uvicorn[standart] (>=0.34.0,<0.35.0)",
+    "logging (>=0.4.9.6,<0.5.0.0)",
+    "aio-pika (>=9.5.5,<10.0.0)",
+    "pydantic-settings (>=2.8.1,<3.0.0)",
 ]
 
 [tool.poetry]
