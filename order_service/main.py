@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from rabbit_connection import rabbit_connection
-from schemas import OrderSchema, OrderResponseSchema
+from schemas import OrderResponseSchema, OrderSchema
 
 
 @asynccontextmanager

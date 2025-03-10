@@ -8,7 +8,7 @@ class RabbitConfig(BaseSettings):
     RABBITMQ_DEFAULT_PASS: str
     RABBITMQ_LOCAL_HOST_NAME: str
     RABBITMQ_LOCAL_PORT: int
-    WORKER_RABBITMQ_QUEUE: str
+    NOTIFICATION_RABBITMQ_QUEUE: str
 
     @property
     def url(self) -> str:
@@ -20,8 +20,7 @@ class RabbitConfig(BaseSettings):
         )
 
     model_config = SettingsConfigDict(
-        env_file=Path(__file__).resolve().parent.parent.parent
-        / ".env",  # Путь к файлу .env
+        env_file=Path(__file__).resolve().parent.parent / ".env",  # Путь к файлу .env
         extra="ignore",  # Игнорировать лишние переменные окружения
     )
 

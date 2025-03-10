@@ -1,11 +1,8 @@
-from aio_pika import connect_robust, Message
-from aio_pika.abc import (
-    AbstractRobustConnection,
-    AbstractRobustChannel,
-)
+from aio_pika import Message, connect_robust
+from aio_pika.abc import AbstractRobustChannel, AbstractRobustConnection
 
-from order_config import rabbit_config
 from logger import configure_logging
+from order_config import rabbit_config
 from schemas import OrderSchema
 
 logger = configure_logging(__name__)

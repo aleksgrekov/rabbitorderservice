@@ -1,10 +1,10 @@
+from schemas import OrderSchema
 from sqlalchemy import Numeric
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from database.models.base_model import Base
 from database.models.order_item_model import OrderItem
 from database.service import SessionFactory
-from schemas import OrderSchema
 
 
 class Order(Base):
@@ -21,9 +21,10 @@ class Order(Base):
     )
 
     @staticmethod
-    async def add_order(order: OrderSchema):
+    async def add_order(order: OrderSchema) -> int:
         async with SessionFactory() as session:
             new_order = Order(user_id=order.user_id, total=order.total)
             new_order.items = [OrderItem(item_name=item) for item in order.items]
             session.add(new_order)
             await session.commit()
+        return new_order.id

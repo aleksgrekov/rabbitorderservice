@@ -1,25 +1,39 @@
 import asyncio
-import aio_pika
-from pydantic import BaseModel
+
+from aio_pika import connect_robust
+from aio_pika.abc import AbstractIncomingMessage
+
+from logger import configure_logging
+from notification_config import rabbit_config
+
+logger = configure_logging(__name__)
 
 
-class Order(BaseModel):
-    user_id: int
-    items: list[str]
-    total: float
+async def send_notification(message: AbstractIncomingMessage):
+    async with message.process():
+        logger.info(
+            "Заказ № %s обработан и уведомление отправлено", message.body.decode()
+        )
 
 
-async def listen_notifications():
-    connection = await aio_pika.connect_robust("amqp://guest:guest@localhost/")
-    channel = await connection.channel()
-    queue = await channel.declare_queue("notifications_queue", durable=True)
+async def main() -> None:
+    logger.info("Starting notification service")
+    queue_key = rabbit_config.NOTIFICATION_RABBITMQ_QUEUE
 
-    async with queue.iterator() as queue_iter:
-        async for message in queue_iter:
-            async with message.process():
-                order = Order.parse_raw(message.body)
-                print(f"Заказ №{order.user_id} обработан и уведомление отправлено")
+    connection = await connect_robust(rabbit_config.url)
+    channel = await connection.channel(publisher_confirms=False)
+    queue = await channel.declare_queue(queue_key, durable=True)
+
+    # await queue.consume(process_message)
+    await queue.consume(send_notification)
+    try:
+        await asyncio.Future()
+    finally:
+        await connection.close()
 
 
 if __name__ == "__main__":
-    asyncio.run(listen_notifications())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        logger.info("Service was stopped!")
