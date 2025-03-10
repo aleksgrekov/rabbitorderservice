@@ -1,12 +1,7 @@
 import asyncio
 import aio_pika
-from pydantic import BaseModel
 
-
-class Order(BaseModel):
-    user_id: int
-    items: list[str]
-    total: float
+from schemas import OrderSchema
 
 
 async def process_order():
@@ -17,7 +12,7 @@ async def process_order():
     async with queue.iterator() as queue_iter:
         async for message in queue_iter:
             async with message.process():
-                order = Order.parse_raw(message.body)
+                order = message.body
                 print(f"Processing order: {order}")
 
                 # Имитация обработки заказа
@@ -28,12 +23,10 @@ async def process_order():
                     "notifications_queue", durable=True
                 )
                 await channel.default_exchange.publish(
-                    aio_pika.Message(body=order.json().encode()),
+                    aio_pika.Message(body=order),
                     routing_key=notification_queue.name,
                 )
-                print(
-                    f"Order {order.user_id} processed and sent to notifications_queue"
-                )
+                print(f"Order {order} processed and sent to notifications_queue")
 
 
 if __name__ == "__main__":

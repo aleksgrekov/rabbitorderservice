@@ -3,7 +3,7 @@ from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class Base(BaseSettings):
+class RabbitConfig(BaseSettings):
     RABBITMQ_DEFAULT_USER: str = "guest"
     RABBITMQ_DEFAULT_PASS: str = "guest"
     RABBITMQ_LOCAL_HOST_NAME: str = "localhost"
@@ -11,7 +11,7 @@ class Base(BaseSettings):
     RABBITMQ_QUEUE: str = "orders_queue"
 
     @property
-    def rabbit_url(self) -> str:
+    def url(self) -> str:
         return (
             f"amqp://{self.RABBITMQ_DEFAULT_USER}:"
             f"{self.RABBITMQ_DEFAULT_PASS}@"
@@ -26,4 +26,4 @@ class Base(BaseSettings):
     )
 
 
-base_config = Base()
+rabbit_config = RabbitConfig()
