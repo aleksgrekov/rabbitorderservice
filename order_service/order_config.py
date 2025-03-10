@@ -4,11 +4,11 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class RabbitConfig(BaseSettings):
-    RABBITMQ_DEFAULT_USER: str = "guest"
-    RABBITMQ_DEFAULT_PASS: str = "guest"
-    RABBITMQ_LOCAL_HOST_NAME: str = "localhost"
-    RABBITMQ_LOCAL_PORT: int = 5672
-    RABBITMQ_QUEUE: str = "orders_queue"
+    RABBITMQ_DEFAULT_USER: str
+    RABBITMQ_DEFAULT_PASS: str
+    RABBITMQ_LOCAL_HOST_NAME: str
+    RABBITMQ_LOCAL_PORT: int
+    ORDERS_RABBITMQ_QUEUE: str
 
     @property
     def url(self) -> str:
@@ -20,8 +20,7 @@ class RabbitConfig(BaseSettings):
         )
 
     model_config = SettingsConfigDict(
-        env_file=Path(__file__).resolve().parent.parent.parent
-        / ".env",  # Путь к файлу .env
+        env_file=Path(__file__).resolve().parent.parent / ".env",  # Путь к файлу .env
         extra="ignore",  # Игнорировать лишние переменные окружения
     )
 

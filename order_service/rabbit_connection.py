@@ -4,7 +4,7 @@ from aio_pika.abc import (
     AbstractRobustChannel,
 )
 
-from config import rabbit_config
+from order_config import rabbit_config
 from logger import configure_logging
 from schemas import OrderSchema
 
@@ -34,7 +34,7 @@ class RabbitConnection:
     async def send_messages(
         self,
         message: OrderSchema,
-        routing_key: str = rabbit_config.RABBITMQ_QUEUE,
+        routing_key: str = rabbit_config.ORDERS_RABBITMQ_QUEUE,
     ) -> None:
         body = message.model_dump_json().encode()
         await self._channel.default_exchange.publish(

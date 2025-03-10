@@ -1,33 +1,6 @@
 import asyncio
-import aio_pika
 
-from schemas import OrderSchema
-
-
-async def process_order():
-    connection = await aio_pika.connect_robust("amqp://guest:guest@localhost/")
-    channel = await connection.channel()
-    queue = await channel.declare_queue("orders_queue", durable=True)
-
-    async with queue.iterator() as queue_iter:
-        async for message in queue_iter:
-            async with message.process():
-                order = message.body
-                print(f"Processing order: {order}")
-
-                # Имитация обработки заказа
-                await asyncio.sleep(2)
-
-                # Отправка в notifications_queue
-                notification_queue = await channel.declare_queue(
-                    "notifications_queue", durable=True
-                )
-                await channel.default_exchange.publish(
-                    aio_pika.Message(body=order),
-                    routing_key=notification_queue.name,
-                )
-                print(f"Order {order} processed and sent to notifications_queue")
-
+from rabbit.consumer import main
 
 if __name__ == "__main__":
-    asyncio.run(process_order())
+    asyncio.run(main())
