@@ -7,10 +7,9 @@ from aio_pika.abc import (
     AbstractRobustChannel,
     AbstractRobustConnection,
 )
-
 from database.models.order_model import Order
-from schemas import OrderSchema
 from logger import configure_logging
+from schemas import OrderSchema
 from worker_config import rabbit_config
 
 # Настройка логгера
