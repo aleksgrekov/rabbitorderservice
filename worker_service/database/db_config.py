@@ -37,8 +37,7 @@ class DBSettings(BaseSettings):
 
     # Настройки для загрузки из .env файла и игнорирования лишних переменных окружения
     model_config = SettingsConfigDict(
-        env_file=Path(__file__).resolve().parent.parent.parent
-        / ".env",  # Путь к .env файлу
+        env_file=Path(__file__).resolve().parent.parent / ".env",  # Путь к .env файлу
         extra="ignore",  # Игнорировать переменные окружения, которых нет в классе
     )
 

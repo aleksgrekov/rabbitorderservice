@@ -29,7 +29,7 @@ class RabbitConfig(BaseSettings):
 
     # Конфигурация чтения переменных из .env файла
     model_config = SettingsConfigDict(
-        env_file=Path(__file__).resolve().parent.parent / ".env",  # Путь к файлу .env
+        env_file=Path(__file__).resolve().parent / ".env",  # Путь к файлу .env
         extra="ignore",  # Игнорировать лишние переменные окружения
     )
 

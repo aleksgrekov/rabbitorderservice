@@ -1,9 +1,8 @@
 from aio_pika import Message, connect_robust
 from aio_pika.abc import AbstractRobustChannel, AbstractRobustConnection
-
+from logger import configure_logging
 from order_config import rabbit_config
 from schemas import OrderSchema
-from logger import configure_logging
 
 logger = configure_logging(__name__)
 
@@ -64,3 +63,6 @@ class RabbitConnection:
             logger.info(f"Отправка сообщения в очередь: {queue_key}")
         except Exception as e:
             logger.exception("Ошибка при отправке сообщения в RabbitMQ: %s", e)
+
+
+rabbit_connection = RabbitConnection()

@@ -1,8 +1,5 @@
-from typing import Annotated, AsyncGenerator
-
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
-
 from database.db_config import db_settings
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 # Формируем URL для подключения к базе данных
 DB_URL: str = db_settings.db_url(driver="asyncpg")

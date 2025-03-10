@@ -1,13 +1,15 @@
 import asyncio
 import json
+
 from aio_pika import Message, connect_robust
 from aio_pika.abc import (
     AbstractIncomingMessage,
     AbstractRobustChannel,
     AbstractRobustConnection,
 )
+
 from database.models.order_model import Order
-from database.schemas import OrderSchema
+from schemas import OrderSchema
 from logger import configure_logging
 from worker_config import rabbit_config
 
@@ -37,9 +39,6 @@ async def process_message(
             order_id = await Order.add_order(order=order)
             logger.info(f"Заказ {order_id} успешно добавлен в базу данных")
 
-            await message.ack()
-            logger.info(f"Заказ {order_id} обработан и подтвержден")
-
             await asyncio.sleep(2)
 
             await channel.default_exchange.publish(
@@ -50,10 +49,6 @@ async def process_message(
 
     except Exception as e:
         logger.error(f"Ошибка при обработке заказа: {e}")
-        await message.nack(requeue=True)
-        logger.info(
-            f"Сообщение с заказом {message.body.decode()} отклонено и поставлено в очередь на повторную обработку"
-        )
 
 
 async def main() -> None:

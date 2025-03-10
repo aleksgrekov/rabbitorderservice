@@ -1,7 +1,6 @@
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException, status
-
 from logger import configure_logging
 from rabbit_connection import rabbit_connection
 from schemas import OrderResponseSchema, OrderSchema
@@ -75,4 +74,4 @@ async def create_order(order: OrderSchema) -> OrderResponseSchema:
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run("main:app")

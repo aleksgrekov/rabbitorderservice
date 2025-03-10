@@ -1,12 +1,12 @@
-from sqlalchemy.exc import SQLAlchemyError
-
-from logger import configure_logging
-from schemas import OrderSchema
-from sqlalchemy import Numeric
-from sqlalchemy.orm import Mapped, mapped_column, relationship
 from database.models.base_model import Base
 from database.models.order_item_model import OrderItem
 from database.service import SessionFactory
+from logger import configure_logging
+from sqlalchemy import Numeric
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from schemas import OrderSchema
 
 logger = configure_logging(__name__)
 

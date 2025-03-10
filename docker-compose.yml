@@ -1,4 +1,48 @@
 services:
+  orders_app:
+    build: ./order_service
+    container_name: order_service
+    ports:
+      - "8000:8000"
+    volumes:
+      - .env:/app/.env
+    command: bash -c "uvicorn main:app --host 0.0.0.0 --port 8000"
+    networks:
+      - app_network
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+
+  worker_app:
+    build: ./worker_service
+    container_name: worker_service
+    volumes:
+      - .env:/app/.env
+    command: bash -c "alembic upgrade head && python main.py"
+    networks:
+      - app_network
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+
+  notification_app:
+    build: ./notifications_service
+    container_name: notifications_service
+    volumes:
+      - .env:/app/.env
+    command: "python main.py"
+    networks:
+      - app_network
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+
   postgres:
     image: postgres
     container_name: orders_db
@@ -8,13 +52,13 @@ services:
       - "5432:5432"
     volumes:
       - ./worker_service/db:/var/lib/postgresql/data
-#    healthcheck:
-#      test: [ "CMD-SHELL", "pg_isready -U postgres -d weatherparser" ]
-#      interval: 10s
-#      timeout: 5s
-#      retries: 5
-#    networks:
-#      - app_network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d orders_db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app_network
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
@@ -25,8 +69,15 @@ services:
       - "15672:15672"
     env_file:
       - .env
-    volumes:
-      - rabbitmq-data:/var/lib/rabbitmq
+    networks:
+      - app_network
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      timeout: 5s
 
-volumes:
-  rabbitmq-data:
+networks:
+  app_network:
+    driver: bridge

@@ -26,4 +26,5 @@ __pycache__/
 db/
 
 # Виртуальное окружение для разработки
-requirements-dev.txt
+poetry.lock
+pyproject.toml
