@@ -25,3 +25,8 @@ services:
       - "15672:15672"
     env_file:
       - .env
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+
+volumes:
+  rabbitmq-data:
