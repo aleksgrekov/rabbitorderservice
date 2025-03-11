@@ -1,6 +1,5 @@
 from typing import List
 
-from annotated_types import Ge
 from pydantic import BaseModel, Field
 
 

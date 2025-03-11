@@ -1,5 +1,5 @@
 from aio_pika import Message, connect_robust
-from aio_pika.abc import AbstractRobustChannel, AbstractRobustConnection
+from aio_pika.abc import AbstractChannel, AbstractRobustConnection
 from logger import configure_logging
 from order_config import rabbit_config
 from schemas import OrderSchema
@@ -13,7 +13,7 @@ class RabbitConnection:
     """
 
     _connection: AbstractRobustConnection | None = None
-    _channel: AbstractRobustChannel | None = None
+    _channel: AbstractChannel | None = None
 
     async def disconnect(self) -> None:
         """

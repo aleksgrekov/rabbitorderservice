@@ -32,7 +32,7 @@ class Order(Base):
     )
 
     @staticmethod
-    async def add_order(order: OrderSchema) -> int:
+    async def add_order(order: OrderSchema) -> int | None:
         """
         Добавляет новый заказ в базу данных.
 

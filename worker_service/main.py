@@ -3,9 +3,9 @@ import json
 
 from aio_pika import Message, connect_robust
 from aio_pika.abc import (
+    AbstractChannel,
+    AbstractConnection,
     AbstractIncomingMessage,
-    AbstractRobustChannel,
-    AbstractRobustConnection,
 )
 from database.models.order_model import Order
 from logger import configure_logging
@@ -17,7 +17,7 @@ logger = configure_logging(__name__)
 
 
 async def process_message(
-    message: AbstractIncomingMessage, channel: AbstractRobustChannel
+    message: AbstractIncomingMessage, channel: AbstractChannel
 ) -> None:
     """
     Обрабатывает сообщение из очереди RabbitMQ, десериализует его, добавляет заказ в базу данных,
@@ -30,22 +30,21 @@ async def process_message(
     :param channel: Канал для отправки сообщений.
     """
     try:
-        async with message.process():
-            order = OrderSchema.model_validate(json.loads(message.body.decode()))
-            logger.info(f"Обработка заказа: {order}")
+        order = OrderSchema.model_validate(json.loads(message.body.decode()))
+        logger.info(f"Обработка заказа: {order}")
 
-            # Добавление заказа в базу данных
-            order_id = await Order.add_order(order=order)
+        # Добавление заказа в базу данных
+        order_id = await Order.add_order(order=order)
+        if order_id:
             logger.info(f"Заказ {order_id} успешно добавлен в базу данных")
 
             await asyncio.sleep(2)
-
             await channel.default_exchange.publish(
                 Message(body=f"{order_id}_{order.user_id}_{len(order.items)}".encode()),
                 routing_key=rabbit_config.NOTIFICATION_RABBITMQ_QUEUE,
             )
             logger.info(f"Заказ {order_id} отправлен в очередь уведомлений")
-
+            await message.ack()
     except Exception as e:
         logger.error(f"Ошибка при обработке заказа: {e}")
 
@@ -57,7 +56,7 @@ async def main() -> None:
 
     В случае ошибки в процессе выполнения логируется ошибка и сервис корректно завершает работу.
     """
-    connection: AbstractRobustConnection | None = None
+    connection: AbstractConnection | None = None
 
     try:
         logger.info("Запуск воркер-сервиса")
@@ -76,7 +75,8 @@ async def main() -> None:
         logger.error(f"Ошибка при запуске воркер-сервиса: {e}")
     finally:
         logger.info("Остановка воркер-сервиса")
-        await connection.close()
+        if connection:
+            await connection.close()
 
 
 if __name__ == "__main__":

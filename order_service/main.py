@@ -69,9 +69,3 @@ async def create_order(order: OrderSchema) -> OrderResponseSchema:
         )
 
     return OrderResponseSchema(order=order)
-
-
-if __name__ == "__main__":
-    import uvicorn
-
-    uvicorn.run("main:app")
