@@ -41,9 +41,9 @@ class RabbitConnection:
             await self.disconnect()
 
     async def send_messages(
-        self,
-        message: OrderSchema,
-        queue_key: str = rabbit_config.ORDERS_RABBITMQ_QUEUE,
+            self,
+            message: OrderSchema,
+            queue_key: str = rabbit_config.ORDERS_RABBITMQ_QUEUE,
     ) -> None:
         """
         Отправка сообщений в RabbitMQ.
@@ -52,17 +52,24 @@ class RabbitConnection:
         :param queue_key: Очередь, в которую будет отправлено сообщение.
         """
         if self._channel is None or self._channel.is_closed:
-            logger.error("Невозможно отправить сообщение. Канал закрыт.")
+            logger.error("Невозможно отправить сообщение. Канал RabbitMQ закрыт или не подключен.")
             return
 
         body = message.model_dump_json().encode()
         try:
             await self._channel.default_exchange.publish(
-                Message(body=body), routing_key=queue_key
+                Message(
+                    body=body,
+                    headers={
+                        rabbit_config.X_RETRIES_HEADER: rabbit_config.ATTEMPTS_COUNT,
+                    }
+                ),
+                routing_key=queue_key
             )
-            logger.info(f"Отправка сообщения в очередь: {queue_key}")
+            logger.info(f"Сообщение успешно отправлено в очередь: {queue_key}")
         except Exception as e:
             logger.exception("Ошибка при отправке сообщения в RabbitMQ: %s", e)
+            await self.disconnect()
 
 
 rabbit_connection = RabbitConnection()

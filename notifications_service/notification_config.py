@@ -12,6 +12,11 @@ class RabbitConfig(BaseSettings):
     RABBITMQ_LOCAL_HOST_NAME: str
     RABBITMQ_LOCAL_PORT: int
 
+    # Переменные окружения для счетчика попыток отправки сообщения
+    X_RETRIES_HEADER: str
+    ATTEMPTS_COUNT: int
+    CRITICAL_ATTEMPTS_VALUE: int
+
     # Очереди RabbitMQ
     NOTIFICATION_RABBITMQ_QUEUE: str
 
